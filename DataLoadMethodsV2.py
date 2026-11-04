@@ -78,8 +78,8 @@ def clean_name(col_name="customer_name"):
     cleaned = F.regexp_replace(cleaned, r"(\p{Ll})\s+(\p{Ll})", "$1$2")
     # strip leftover punctuation but KEEP apostrophes inside names (O'Rourke)
     cleaned = F.regexp_replace(cleaned, r"[^\p{L}\s']", "")
-    # drop double quotes from the names
-    return F.regexp_replace(cleaned, r"\"", "")
+    # strip any double or single quotes from the start or end of the string
+    return F.regexp_replace(cleaned, r"^['\"]+|['\"]+$", "")
 
 
 def clean_phone(col_name="phone"):
