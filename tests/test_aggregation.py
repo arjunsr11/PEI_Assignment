@@ -107,6 +107,19 @@ def test_profit_is_stored_rounded_to_two_decimals(spark):
     assert profit_type.startswith("decimal(") and profit_type.endswith(",2)"), profit_type
 
 
+@pytest.mark.parametrize("column", GROUP_COLS + ["profit"])
+def test_profit_aggregates_column_has_no_nulls(spark, column):
+    """Task 4: each aggregated column is checked individually; any NULL present fails the test."""
+    null_count = (
+        spark.table("curated.orders")
+        .where(F.col(column).isNull())
+        .count()
+    )
+    assert null_count == 0, (
+        f"curated.orders column '{column}' contains {null_count} NULL value(s)"
+    )
+
+
 @pytest.fixture()
 def restore_profit_aggregates(dlm, spark):
     """curated.profit_aggregates is overwritten by the fixture test; restore real data after."""
